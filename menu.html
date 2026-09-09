@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi" data-bs-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Lớp 10.4 · Menu</title>
+	<meta name="description" content="Thời khóa biểu / lịch tuần của lớp 10.4 — Trường Sao Việt.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="bootstrap.css">
+</head>
+<body>
+	<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom sticky-top">
+		<div class="container">
+			<a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="index.html">
+				<span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-dark text-warning" style="width:40px;height:40px;font-size:.72rem;font-weight:700;">10.4</span> classroom
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở menu">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="mainNav">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item"><a class="nav-link" href="index.html">Introduction</a></li>
+					<li class="nav-item"><a class="nav-link" href="library.html">Library</a></li>
+					<li class="nav-item"><a class="nav-link active" aria-current="page" href="menu.html">Menu</a></li>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Student / Teacher</a>
+						<ul class="dropdown-menu">
+							<li><a class="dropdown-item" href="members.html#students">👩‍🎓 Students</a></li>
+							<li><a class="dropdown-item" href="members.html#teachers">👨‍🏫 Teachers</a></li>
+						</ul>
+					</li>
+				</ul>
+				<div class="d-flex gap-2">
+					<a class="btn btn-outline-secondary" href="signin.html">Sign in</a>
+					<a class="btn btn-primary" href="signup.html">Sign up</a>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<section class="bg-body-tertiary border-bottom py-5">
+		<div class="container py-3">
+			<p class="text-primary text-uppercase fw-bold mb-2" style="letter-spacing:.15em;font-size:.8rem;">Menu · Lịch tuần</p>
+			<h1 class="display-5 fw-bold mb-2">Thời khóa biểu 10.4</h1>
+			<p class="text-secondary mb-0">Lịch học theo tuần của lớp. (Bạn muốn “Menu” là thời khóa biểu, thực đơn căn-tin, hay danh mục hoạt động? Nói mình biết để chỉnh lại đúng ý.)</p>
+		</div>
+	</section>
+
+	<section class="py-5">
+		<div class="container">
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+				<div class="col">
+					<div class="card h-100 shadow-sm">
+						<div class="card-header d-flex justify-content-between align-items-center fw-bold">Thứ Hai <span class="text-secondary small fw-normal">Mon</span></div>
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item d-flex justify-content-between">Toán <span class="text-secondary small">Tiết 1–2</span></li>
+							<li class="list-group-item d-flex justify-content-between">Vật Lý <span class="text-secondary small">Tiết 3–4</span></li>
+							<li class="list-group-item d-flex justify-content-between">Tin Học <span class="text-secondary small">Tiết 5</span></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card h-100 shadow-sm">
+						<div class="card-header d-flex justify-content-between align-items-center fw-bold">Thứ Ba <span class="text-secondary small fw-normal">Tue</span></div>
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item d-flex justify-content-between">Tin Học <span class="text-secondary small">Tiết 1–2</span></li>
+							<li class="list-group-item d-flex justify-content-between">Toán <span class="text-secondary small">Tiết 3</span></li>
+							<li class="list-group-item d-flex justify-content-between">Ngữ Văn <span class="text-secondary small">Tiết 4–5</span></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card h-100 shadow-sm">
+						<div class="card-header d-flex justify-content-between align-items-center fw-bold">Thứ Tư <span class="text-secondary small fw-normal">Wed</span></div>
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item d-flex justify-content-between">Vật Lý <span class="text-secondary small">Tiết 1–2</span></li>
+							<li class="list-group-item d-flex justify-content-between">Toán <span class="text-secondary small">Tiết 3–4</span></li>
+							<li class="list-group-item d-flex justify-content-between">Thể dục <span class="text-secondary small">Tiết 5</span></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card h-100 shadow-sm">
+						<div class="card-header d-flex justify-content-between align-items-center fw-bold">Thứ Năm <span class="text-secondary small fw-normal">Thu</span></div>
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item d-flex justify-content-between">Tin Học <span class="text-secondary small">Tiết 1–2</span></li>
+							<li class="list-group-item d-flex justify-content-between">Tiếng Anh <span class="text-secondary small">Tiết 3–4</span></li>
+							<li class="list-group-item d-flex justify-content-between">Vật Lý <span class="text-secondary small">Tiết 5</span></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card h-100 shadow-sm">
+						<div class="card-header d-flex justify-content-between align-items-center fw-bold">Thứ Sáu <span class="text-secondary small fw-normal">Fri</span></div>
+						<ul class="list-group list-group-flush">
+							<li class="list-group-item d-flex justify-content-between">Toán <span class="text-secondary small">Tiết 1–2</span></li>
+							<li class="list-group-item d-flex justify-content-between">Dự án / Project <span class="text-secondary small">Tiết 3–4</span></li>
+							<li class="list-group-item d-flex justify-content-between">Sinh hoạt lớp <span class="text-secondary small">Tiết 5</span></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="alert alert-warning mt-4 mb-0"><strong>Placeholder:</strong> Đây là thời khóa biểu mẫu. Gửi mình lịch thật (môn + tiết) và mình sẽ điền chính xác.</div>
+		</div>
+	</section>
+
+	<footer class="bg-dark text-white-50 pt-5 pb-4 border-top border-secondary">
+		<div class="container">
+			<div class="row g-4">
+				<div class="col-lg-5">
+					<div class="d-flex align-items-center gap-2 fw-bold text-white mb-2">
+						<span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning text-dark" style="width:38px;height:38px;font-size:.7rem;font-weight:700;">10.4</span> classroom
+					</div>
+					<p class="mb-0" style="max-width:34ch;">Lớp 10.4 — Trường Sao Việt. Định hướng kỹ thuật &amp; công nghệ, tổng hợp Lý · Tin · Toán. Phòng A716.</p>
+				</div>
+				<div class="col-6 col-lg-3">
+					<h4 class="text-white-50 text-uppercase small mb-3" style="letter-spacing:.12em;">Khám phá</h4>
+					<a class="d-block text-decoration-none link-light py-1" href="index.html">Introduction</a>
+					<a class="d-block text-decoration-none link-light py-1" href="library.html">Library</a>
+					<a class="d-block text-decoration-none link-light py-1" href="menu.html">Menu</a>
+					<a class="d-block text-decoration-none link-light py-1" href="members.html">Student / Teacher</a>
+				</div>
+				<div class="col-6 col-lg-3">
+					<h4 class="text-white-50 text-uppercase small mb-3" style="letter-spacing:.12em;">Tài khoản</h4>
+					<a class="d-block text-decoration-none link-light py-1" href="signin.html">Sign in</a>
+					<a class="d-block text-decoration-none link-light py-1" href="signup.html">Sign up</a>
+				</div>
+			</div>
+			<hr class="border-secondary mt-4">
+			<div class="d-flex flex-wrap justify-content-between small">
+				<span>© 2026 Lớp 10.4 · Trường Sao Việt</span>
+				<span>Phòng A716</span>
+			</div>
+		</div>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
