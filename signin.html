@@ -7,7 +7,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="bootstrap.css">
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom sticky-top">
@@ -23,13 +23,6 @@
 					<li class="nav-item"><a class="nav-link" href="index.html">Introduction</a></li>
 					<li class="nav-item"><a class="nav-link" href="library.html">Library</a></li>
 					<li class="nav-item"><a class="nav-link" href="menu.html">Menu</a></li>
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Student / Teacher</a>
-						<ul class="dropdown-menu">
-							<li><a class="dropdown-item" href="members.html#students">👩‍🎓 Students</a></li>
-							<li><a class="dropdown-item" href="members.html#teachers">👨‍🏫 Teachers</a></li>
-						</ul>
-					</li>
 				</ul>
 				<div class="d-flex gap-2">
 					<a class="btn btn-primary" href="signin.html">Sign in</a>
@@ -46,7 +39,7 @@
 				<div>
 					<p class="text-warning text-uppercase fw-bold mb-3" style="letter-spacing:.15em;font-size:.8rem;">Lớp 10.4 · Sao Việt</p>
 					<h2 class="display-5 fw-bold mb-3">Chào mừng trở lại.</h2>
-					<p class="text-white-50" style="max-width:40ch;">Đăng nhập để vào không gian lớp 10.4 — thư viện, lịch tuần và kết nối với lớp.</p>
+					<p class="text-white-50" style="max-width:40ch;">Đăng nhập để vào không gian lớp 10.4 — thư viện, tài liệu và nội dung dành cho thành viên.</p>
 				</div>
 				<p class="text-white-50 small mb-0">Phòng A716 · Định hướng Kỹ thuật – Công nghệ</p>
 			</div>
@@ -55,10 +48,10 @@
 			<div class="col-lg-6 d-flex align-items-center justify-content-center p-4 p-md-5">
 				<form id="signin-form" novalidate style="width:100%;max-width:400px;">
 					<h1 class="fw-bold mb-1">Sign in</h1>
-					<p class="text-secondary mb-4">Đăng nhập bằng email và mật khẩu.</p>
+					<p class="text-secondary mb-4">Đăng nhập bằng email và mật khẩu (email cần được xác minh).</p>
 
 					<div class="alert alert-warning d-none" id="config-warn">
-						<strong>Chưa cấu hình Firebase.</strong> Hãy điền <code>apiKey</code> và <code>appId</code> trong <code>firebase-config.js</code> để bật đăng nhập.
+						<strong>Chưa cấu hình Firebase.</strong> Hãy điền <code>apiKey</code> và <code>appId</code> trong <code>assets/js/firebase-config.js</code> để bật đăng nhập.
 					</div>
 
 					<div class="mb-3">
@@ -80,56 +73,6 @@
 	</main>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="firebase-config.js"></script>
-	<script type="module">
-		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-		import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-		const form = document.getElementById('signin-form');
-		const msg = document.getElementById('auth-msg');
-		const btn = document.getElementById('submit-btn');
-		const warn = document.getElementById('config-warn');
-		const cfg = window.firebaseConfig;
-
-		function show(text, ok) {
-			msg.textContent = text;
-			msg.className = 'mt-3 alert ' + (ok ? 'alert-success' : 'alert-danger');
-		}
-
-		function friendly(code) {
-			const map = {
-				'auth/invalid-email': 'Email không hợp lệ.',
-				'auth/user-disabled': 'Tài khoản đã bị vô hiệu hoá.',
-				'auth/user-not-found': 'Không tìm thấy tài khoản với email này.',
-				'auth/wrong-password': 'Sai mật khẩu.',
-				'auth/invalid-credential': 'Email hoặc mật khẩu không đúng.',
-				'auth/too-many-requests': 'Thử lại quá nhiều lần — hãy đợi một lát.',
-				'auth/network-request-failed': 'Lỗi mạng — kiểm tra kết nối.'
-			};
-			return map[code] || ('Đăng nhập thất bại (' + code + ').');
-		}
-
-		if (!cfg || !cfg.apiKey || cfg.apiKey.indexOf('TODO') === 0) {
-			warn.classList.remove('d-none');
-			btn.disabled = true;
-		} else {
-			const auth = getAuth(initializeApp(cfg));
-			form.addEventListener('submit', async (e) => {
-				e.preventDefault();
-				const email = form.email.value.trim();
-				const password = form.password.value;
-				if (!email || !password) { show('Nhập đầy đủ email và mật khẩu.', false); return; }
-				btn.disabled = true; btn.textContent = 'Đang đăng nhập…';
-				try {
-					const cred = await signInWithEmailAndPassword(auth, email, password);
-					show('Đăng nhập thành công! Xin chào ' + cred.user.email + '.', true);
-					setTimeout(() => { window.location.href = 'index.html'; }, 1200);
-				} catch (err) {
-					show(friendly(err.code), false);
-					btn.disabled = false; btn.textContent = 'Đăng nhập';
-				}
-			});
-		}
-	</script>
+	<script type="module" src="assets/js/signin.js"></script>
 </body>
 </html>

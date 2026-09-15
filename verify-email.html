@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="vi" data-bs-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Lớp 10.4 · Xác minh email</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
+</head>
+<body class="bg-body-tertiary">
+	<main class="container d-flex align-items-center justify-content-center" style="min-height:100vh;">
+		<div class="card shadow-sm border-0" style="max-width:520px;width:100%;">
+			<div class="card-body p-4 p-md-5 text-center">
+				<a class="navbar-brand d-inline-flex align-items-center gap-2 fw-bold mb-4" href="index.html">
+					<span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-dark text-warning" style="width:40px;height:40px;font-size:.72rem;font-weight:700;">10.4</span> classroom
+				</a>
+				<div class="fs-1 mb-2">📩</div>
+				<h1 class="h3 fw-bold mb-2">Xác minh email của bạn</h1>
+				<p class="text-secondary mb-1">Một email xác minh đã được gửi tới:</p>
+				<p class="fw-semibold mb-3" id="verificationEmail">email của bạn</p>
+				<p class="text-secondary">Mở email và bấm vào liên kết xác minh. Sau đó quay lại đây và bấm <strong>“Tôi đã xác minh”</strong> để tiếp tục.</p>
+
+				<div class="d-grid gap-2 mt-4">
+					<button type="button" class="btn btn-primary py-2" id="continueBtn">Tôi đã xác minh — tiếp tục</button>
+					<button type="button" class="btn btn-outline-secondary" id="resendBtn">Gửi lại email xác minh</button>
+				</div>
+
+				<div id="verifyStatus" class="d-none"></div>
+
+				<p class="text-secondary small mt-4 mb-0">Gặp trục trặc? <a href="signin.html" class="link-primary fw-semibold" id="loginLink">Tới trang đăng nhập</a></p>
+			</div>
+		</div>
+	</main>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module" src="assets/js/verify-email.js"></script>
+</body>
+</html>
