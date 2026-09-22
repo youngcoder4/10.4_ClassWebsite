@@ -98,17 +98,15 @@ export const TRY_AGAIN = { id: "tryagain", code: "NA", name: "Try again", weight
 export const db = configured ? getDatabase(getApp()) : null;
 export const storage = configured ? getStorage(getApp()) : null;
 
-/* One short, STABLE code per user (same every visit), derived from
-   the uid — the student pastes it into their like/comment so the
-   class can tell whose comment is whose. e.g. "K7F3Q". */
-export function shortUserId(uid) {
-	let h = 0x811c9dc5;
-	const s = String(uid || "");
-	for (let i = 0; i < s.length; i++) {
-		h ^= s.charCodeAt(i);
-		h = Math.imul(h, 0x01000193);
-	}
-	return (h >>> 0).toString(36).toUpperCase().padStart(5, "0").slice(-5);
+/* A short RANDOM code — generated once per user and saved to the
+   database, then reused every visit, so each user keeps one stable
+   code they paste into their like/comment so the class can tell
+   whose comment is whose. e.g. "K7F3Q" (no easily-confused chars). */
+export function randomCode(len = 5) {
+	const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no O/0/I/1
+	let out = "";
+	for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * chars.length)];
+	return out;
 }
 
 /* Short, human-readable proof id, e.g. Q104-MC-LZ4K9A. */

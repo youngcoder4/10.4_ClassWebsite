@@ -2,7 +2,7 @@
    Firebase Storage, record the submission in the database, and
    flip the user's quest status to "submitted". */
 import { auth, configured, isVerified } from "./auth-core.js";
-import { db, storage, QUEST_IMAGE_COUNT, shortUserId } from "./quest-config.js";
+import { db, storage, QUEST_IMAGE_COUNT, randomCode } from "./quest-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { ref as dbRef, get, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 import { ref as stRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
@@ -137,6 +137,20 @@ async function submit() {
 	}
 }
 
+// One random code per user: reuse the saved one, or make + save it once.
+async function loadOrCreateCode(user) {
+	const codeRef = dbRef(db, `users/${user.uid}/questCode`);
+	try {
+		const snap = await get(codeRef);
+		let code = snap.val();
+		if (!code) { code = randomCode(); await set(codeRef, code); }
+		userCode = code;
+	} catch (_) {
+		userCode = userCode || randomCode(); // offline fallback (not persisted)
+	}
+	if (userCodeEl) userCodeEl.textContent = userCode;
+}
+
 async function checkExisting(user) {
 	try {
 		const snap = await get(dbRef(db, `users/${user.uid}/quest/status`));
@@ -162,12 +176,9 @@ if (configured && auth) {
 	onAuthStateChanged(auth, (user) => {
 		if (isVerified(user)) {
 			currentUser = user;
-			userCode = shortUserId(user.uid);
-			if (userCodeEl) userCodeEl.textContent = userCode;
-			// persist once so the admin can look it up
-			set(dbRef(db, `users/${user.uid}/questCode`), userCode).catch(() => {});
 			content.classList.remove("d-none");
 			gate.classList.add("d-none");
+			loadOrCreateCode(user);
 			checkExisting(user);
 		} else {
 			currentUser = null;
