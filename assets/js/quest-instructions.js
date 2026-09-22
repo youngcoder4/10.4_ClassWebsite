@@ -1,7 +1,6 @@
 /* quest.html — gate on a verified user, render the 4 video steps,
    and drive the "I Got it" -> "Are you sure" -> upload handoff. */
 import { auth, configured, isVerified } from "./auth-core.js";
-import { QUEST_IMAGE_COUNT } from "./quest-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 
 const gate = document.getElementById("gate");

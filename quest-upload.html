@@ -10,7 +10,8 @@
 	<link href="https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="assets/css/bootstrap.css">
 	<style>
-		.slot{position:relative;border:2px dashed var(--bs-border-color);border-radius:1rem;aspect-ratio:1/1;
+		.slot{position:relative;border:2px dashed var(--bs-border-color);border-radius:1rem;
+			width:clamp(120px,30vw,150px);aspect-ratio:1/1;
 			display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;overflow:hidden;
 			background:var(--bs-body-tertiary);transition:.15s}
 		.slot:hover{border-color:#22c55e;background:#f0fdf4}
@@ -63,7 +64,7 @@
 		<h1 class="fw-bold mt-2 mb-1">Nộp 4 ảnh bằng chứng</h1>
 		<p class="text-secondary">
 			Làm nhiệm vụ tại <a href="https://engage.cloud.microsoft/main/org/vstar.edu.vn/threads/eyJfdHlwZSI6IlRocmVhZCIsImlkIjoiNDAzNzM4NTA2ODEzNDQwMCJ9?allow_app_redirect=1&trk_email_type=copy_of_message&trk_event=com_thread_click&trk_network=3945581&trk_notif_id=e408fa3b-d63d-38ef-8b5d-95fdd705e900&trk_outlook_origin=glam_static&trk_thread_id=4037385068134400&trk_user=1454474567680" target="_blank" rel="noopener noreferrer nofollow"><strong>the link</strong></a>,
-			chụp lại bằng chứng (like + comment + share) rồi tải lên đúng <strong>4 ảnh</strong> bên dưới.
+			chụp lại bằng chứng (like + comment + share) rồi tải lên <strong>từ 1 đến 5 ảnh</strong> bên dưới.
 		</p>
 
 		<!-- per-user code -->
@@ -83,7 +84,7 @@
 		<div id="alreadyBox" class="alert alert-info d-none"></div>
 
 		<div id="form">
-			<div class="row row-cols-2 row-cols-md-4 g-3 mt-1" id="slots"></div>
+			<div class="d-flex flex-wrap gap-3 mt-3" id="slots"></div>
 
 			<div id="uploadMsg" class="mt-3"></div>
 			<div class="progress d-none mt-3" id="progressWrap" style="height:10px">
@@ -91,7 +92,7 @@
 			</div>
 
 			<div class="d-grid d-sm-flex gap-2 mt-4">
-				<button id="submitBtn" class="btn btn-success btn-lg px-4 fw-bold" disabled>Nộp bài (0/4)</button>
+				<button id="submitBtn" class="btn btn-success btn-lg px-4 fw-bold" disabled>Nộp bài</button>
 				<a href="quest.html" class="btn btn-outline-secondary btn-lg px-4">Huỷ</a>
 			</div>
 		</div>

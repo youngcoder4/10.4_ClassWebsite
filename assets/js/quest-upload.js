@@ -1,8 +1,8 @@
-/* quest-upload.html — collect exactly 4 images, push them to
-   Firebase Storage, record the submission in the database, and
-   flip the user's quest status to "submitted". */
+/* quest-upload.html — collect 1 to 5 images, push them to Firebase
+   Storage, record the submission in the database, and flip the
+   user's quest status to "submitted". */
 import { auth, configured, isVerified } from "./auth-core.js";
-import { db, storage, QUEST_IMAGE_COUNT, randomCode } from "./quest-config.js";
+import { db, storage, QUEST_IMAGE_MIN, QUEST_IMAGE_MAX, randomCode } from "./quest-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
 import { ref as dbRef, get, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 import { ref as stRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
@@ -19,7 +19,7 @@ const thankyou = document.getElementById("thankyou");
 const alreadyBox = document.getElementById("alreadyBox");
 
 const MAX_BYTES = 8 * 1024 * 1024; // 8MB per image
-const files = new Array(QUEST_IMAGE_COUNT).fill(null);
+let picks = [];                    // [{ file, url }] — 1..QUEST_IMAGE_MAX
 let currentUser = null;
 let userCode = "";
 
@@ -33,56 +33,59 @@ copyCodeBtn?.addEventListener("click", async () => {
 	setTimeout(() => (copyCodeBtn.textContent = "📋 Sao chép"), 1400);
 });
 
-function buildSlots() {
+function renderGallery() {
 	slotsEl.innerHTML = "";
-	for (let i = 0; i < QUEST_IMAGE_COUNT; i++) {
-		const slot = document.createElement("label");
-		slot.className = "slot";
+
+	picks.forEach((p, i) => {
+		const slot = document.createElement("div");
+		slot.className = "slot filled";
 		slot.innerHTML = `
 			<span class="slot-num">${i + 1}</span>
-			<button type="button" class="slot-remove" aria-label="Xoá ảnh">&times;</button>
-			<span class="slot-hint">📷<br>Ảnh ${i + 1}<br><small>bấm để chọn</small></span>
-			<input type="file" accept="image/*">`;
-		const input = slot.querySelector("input");
-		const remove = slot.querySelector(".slot-remove");
-
-		input.addEventListener("change", () => onPick(i, slot, input));
-		remove.addEventListener("click", (e) => {
-			e.preventDefault();
-			files[i] = null;
-			slot.classList.remove("filled");
-			slot.querySelector("img")?.remove();
-			slot.querySelector(".slot-hint").style.display = "";
-			input.value = "";
+			<button type="button" class="slot-remove" aria-label="Xoá ảnh">&times;</button>`;
+		const img = document.createElement("img");
+		img.alt = "Ảnh " + (i + 1);
+		img.src = p.url;
+		slot.appendChild(img);
+		slot.querySelector(".slot-remove").addEventListener("click", () => {
+			URL.revokeObjectURL(p.url);
+			picks.splice(i, 1);
+			renderGallery();
 			refreshSubmit();
 		});
 		slotsEl.appendChild(slot);
+	});
+
+	// "add" tile, hidden once the max is reached
+	if (picks.length < QUEST_IMAGE_MAX) {
+		const add = document.createElement("label");
+		add.className = "slot slot-add";
+		add.innerHTML = `
+			<span class="slot-hint">➕<br>Thêm ảnh<br><small>${picks.length}/${QUEST_IMAGE_MAX}</small></span>
+			<input type="file" accept="image/*" multiple>`;
+		add.querySelector("input").addEventListener("change", (e) => onAdd(e.target));
+		slotsEl.appendChild(add);
 	}
 }
 
-function onPick(i, slot, input) {
-	const f = input.files && input.files[0];
-	if (!f) return;
-	if (!f.type.startsWith("image/")) { msg("File phải là ảnh.", "danger"); input.value = ""; return; }
-	if (f.size > MAX_BYTES) { msg("Ảnh quá lớn (tối đa 8MB).", "danger"); input.value = ""; return; }
-	files[i] = f;
-	slot.classList.add("filled");
-	slot.querySelector("img")?.remove();
-	const img = document.createElement("img");
-	img.alt = "Ảnh " + (i + 1);
-	img.src = URL.createObjectURL(f);
-	slot.querySelector(".slot-hint").style.display = "none";
-	slot.appendChild(img);
-	msg("");
+function onAdd(input) {
+	let rejected = 0;
+	for (const f of [...(input.files || [])]) {
+		if (picks.length >= QUEST_IMAGE_MAX) { msg(`Tối đa ${QUEST_IMAGE_MAX} ảnh.`, "warning"); break; }
+		if (!f.type.startsWith("image/") || f.size > MAX_BYTES) { rejected++; continue; }
+		picks.push({ file: f, url: URL.createObjectURL(f) });
+	}
+	input.value = "";
+	msg(rejected ? "Một số file bị bỏ qua (không phải ảnh hoặc lớn hơn 8MB)." : "", "warning");
+	renderGallery();
 	refreshSubmit();
 }
 
-function count() { return files.filter(Boolean).length; }
+function count() { return picks.length; }
 
 function refreshSubmit() {
-	const c = count();
-	submitBtn.textContent = `Nộp bài (${c}/${QUEST_IMAGE_COUNT})`;
-	submitBtn.disabled = c !== QUEST_IMAGE_COUNT;
+	const c = picks.length;
+	submitBtn.textContent = c ? `Nộp bài (${c} ảnh)` : "Nộp bài";
+	submitBtn.disabled = c < QUEST_IMAGE_MIN || c > QUEST_IMAGE_MAX;
 }
 
 function msg(text, kind) {
@@ -90,7 +93,8 @@ function msg(text, kind) {
 }
 
 async function submit() {
-	if (count() !== QUEST_IMAGE_COUNT || !currentUser) return;
+	const c = picks.length;
+	if (c < QUEST_IMAGE_MIN || c > QUEST_IMAGE_MAX || !currentUser) return;
 	submitBtn.disabled = true;
 	progressWrap.classList.remove("d-none");
 	msg("Đang tải ảnh lên…", "info");
@@ -99,15 +103,15 @@ async function submit() {
 	const images = [];
 	const paths = [];
 	try {
-		for (let i = 0; i < files.length; i++) {
-			const f = files[i];
+		for (let i = 0; i < picks.length; i++) {
+			const f = picks[i].file;
 			const ext = (f.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
 			const path = `submissions/${currentUser.uid}/${stamp}_${i + 1}.${ext}`;
 			const r = stRef(storage, path);
 			await uploadBytes(r, f, { contentType: f.type });
 			images.push(await getDownloadURL(r));
 			paths.push(path);
-			progressBar.style.width = Math.round(((i + 1) / files.length) * 100) + "%";
+			progressBar.style.width = Math.round(((i + 1) / picks.length) * 100) + "%";
 		}
 
 		await set(dbRef(db, `submissions/${currentUser.uid}`), {
@@ -168,7 +172,7 @@ async function checkExisting(user) {
 	} catch (_) {}
 }
 
-buildSlots();
+renderGallery();
 refreshSubmit();
 submitBtn.addEventListener("click", submit);
 

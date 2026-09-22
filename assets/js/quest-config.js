@@ -79,7 +79,8 @@ export async function sendQuestEmail({ toEmail, toName, subject, message }) {
 }
 
 /* ---- quest tuning ---- */
-export const QUEST_IMAGE_COUNT = 4;   // images a user must upload
+export const QUEST_IMAGE_MIN = 1;     // fewest images a user may submit
+export const QUEST_IMAGE_MAX = 5;     // most images a user may submit
 export const TOKENS_ON_APPROVE = 5;   // tokens granted when admin accepts
 
 /* ---- minigame prize table ----
