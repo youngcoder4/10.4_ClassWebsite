@@ -7,8 +7,8 @@
    Storage handles.
 
    >>> THINGS YOU MUST FILL IN (see SETUP-quest.md) <<<
-   • EMAILJS.*  — 3 public IDs from https://emailjs.com
-   • ADMIN_EMAILS already contains the two class admins.
+   • EMAILJS.*      — public IDs from https://emailjs.com
+   • ADMIN_PASSWORD — unlocked via Ctrl+Shift+Alt+A on the sign-in page.
    ============================================================ */
 import { configured } from "./auth-core.js";
 import { getApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
