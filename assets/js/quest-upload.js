@@ -21,6 +21,17 @@ const alreadyBox = document.getElementById("alreadyBox");
 const MAX_BYTES = 8 * 1024 * 1024; // 8MB per image
 const files = new Array(QUEST_IMAGE_COUNT).fill(null);
 let currentUser = null;
+let userCode = "";
+
+const userCodeEl = document.getElementById("userCode");
+const copyCodeBtn = document.getElementById("copyCode");
+
+copyCodeBtn?.addEventListener("click", async () => {
+	if (!userCode) return;
+	try { await navigator.clipboard.writeText(userCode); } catch (_) {}
+	copyCodeBtn.textContent = "✓ Đã chép";
+	setTimeout(() => (copyCodeBtn.textContent = "📋 Sao chép"), 1400);
+});
 
 function buildSlots() {
 	slotsEl.innerHTML = "";
@@ -103,6 +114,7 @@ async function submit() {
 			uid: currentUser.uid,
 			name: currentUser.displayName || currentUser.email,
 			email: currentUser.email,
+			userCode,
 			images,
 			paths,
 			status: "pending",
@@ -150,6 +162,10 @@ if (configured && auth) {
 	onAuthStateChanged(auth, (user) => {
 		if (isVerified(user)) {
 			currentUser = user;
+			userCode = shortUserId(user.uid);
+			if (userCodeEl) userCodeEl.textContent = userCode;
+			// persist once so the admin can look it up
+			set(dbRef(db, `users/${user.uid}/questCode`), userCode).catch(() => {});
 			content.classList.remove("d-none");
 			gate.classList.add("d-none");
 			checkExisting(user);

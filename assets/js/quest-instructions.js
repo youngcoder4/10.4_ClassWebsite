@@ -11,8 +11,8 @@ const stepsEl = document.getElementById("steps");
 const STEPS = [
 	{ n: 1, title: "Bước 1", desc: "Xem clip bước 1 và làm theo hướng dẫn đầu tiên." },
 	{ n: 2, title: "Bước 2", desc: "Tiếp tục với bước 2 như trong video." },
-	{ n: 3, title: "Bước 3", desc: "Thực hiện bước 3 và chụp lại kết quả." },
-	{ n: 4, title: "Bước 4", desc: "Hoàn tất bước 4 — chuẩn bị 4 ảnh để nộp." }
+	{ n: 3, title: "How to comment", desc: "" },
+	{ n: 4, title: "How to screenshot", desc: "" }
 ];
 const ACCENTS = ["#22c55e", "#3b82f6", "#a855f7", "#eab308"];
 
@@ -32,8 +32,8 @@ function renderSteps() {
 					<span class="step-badge rounded-circle text-white d-inline-flex align-items-center justify-content-center flex-shrink-0"
 						style="background:${ACCENTS[i]}">${s.n}</span>
 					<div>
-						<h3 class="h5 fw-bold mb-1">${s.title}</h3>
-						<p class="text-secondary mb-0">${s.desc}</p>
+						<h3 class="h5 fw-bold mb-0">${s.title}</h3>
+						${s.desc ? `<p class="text-secondary mb-0 mt-1">${s.desc}</p>` : ""}
 					</div>
 				</div>
 			</div>`;

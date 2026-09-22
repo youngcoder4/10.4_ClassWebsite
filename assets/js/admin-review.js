@@ -124,7 +124,8 @@ function renderQueue(subs) {
 			<div class="card-body">
 				<div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
 					<div>
-						<div class="fw-bold fs-5">${esc(sub.name)}</div>
+						<div class="fw-bold fs-5">${esc(sub.name)}
+							${sub.userCode ? `<span class="badge text-bg-dark ms-1" title="Mã dán trong bình luận">🆔 ${esc(sub.userCode)}</span>` : ""}</div>
 						<div class="text-secondary small">${esc(sub.email)}</div>
 					</div>
 					<div class="text-secondary small text-end">${esc(when)}</div>
