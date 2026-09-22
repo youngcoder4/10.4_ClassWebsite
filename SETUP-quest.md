@@ -47,8 +47,7 @@ Build → **Realtime Database** → create (region already `asia-southeast1`). S
 ```
 {
   "rules": {
-    "users":       { "$uid": { ".read": "auth != null && auth.uid == $uid",
-                               ".write": "auth != null && auth.uid == $uid" } },
+    "users":       { ".read": "auth != null", ".write": "auth != null" },
     "submissions": { ".read": "auth != null", ".write": "auth != null" },
     "inventory":   { ".read": "auth != null", ".write": "auth != null" },
     "wins":        { ".read": "auth != null", ".write": "auth != null" },
@@ -56,8 +55,14 @@ Build → **Realtime Database** → create (region already `asia-southeast1`). S
   }
 }
 ```
-> These are permissive (any signed-in user). Good enough for a classroom.
-> Tighten later with an `admins` node if you want server-enforced admin-only writes.
+> ⚠️ IMPORTANT — do NOT lock `users` to `auth.uid == $uid`. The admin grants
+> tokens by writing to the **student's** `users/<theirUid>/tokens` node, so the
+> admin (a different account) must be allowed to write other users' nodes.
+> These rules are therefore permissive: any signed-in user can read/write these
+> nodes. Good enough for a classroom candy game — a determined student could
+> inflate their own tokens from the console, but nothing valuable is at stake.
+> Default "locked mode" (deny all) will make approve/deny/spin fail with
+> "Permission denied", so you must paste these rules and Publish.
 
 ## 3. Admin access (hotkey + password)
 There is **no admin login menu**. To open the admin hub:

@@ -98,6 +98,19 @@ export const TRY_AGAIN = { id: "tryagain", code: "NA", name: "Try again", weight
 export const db = configured ? getDatabase(getApp()) : null;
 export const storage = configured ? getStorage(getApp()) : null;
 
+/* One short, STABLE code per user (same every visit), derived from
+   the uid — the student pastes it into their like/comment so the
+   class can tell whose comment is whose. e.g. "K7F3Q". */
+export function shortUserId(uid) {
+	let h = 0x811c9dc5;
+	const s = String(uid || "");
+	for (let i = 0; i < s.length; i++) {
+		h ^= s.charCodeAt(i);
+		h = Math.imul(h, 0x01000193);
+	}
+	return (h >>> 0).toString(36).toUpperCase().padStart(5, "0").slice(-5);
+}
+
 /* Short, human-readable proof id, e.g. Q104-MC-LZ4K9A. */
 export function makeWinId(code) {
 	const rnd = Math.random().toString(36).slice(2, 6).toUpperCase();
