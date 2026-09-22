@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="vi" data-bs-theme="light">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Lớp 10.4 · Minigame — Vòng quay quà</title>
+	<meta name="description" content="Vòng quay quà của lớp 10.4 — mỗi lượt quay tốn 1 token, trúng kẹo và bánh trung thu.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
+	<style>
+		:root{ --tile:clamp(104px,16vw,132px); --rollh:clamp(140px,20vw,168px); }
+		.token-chip{display:inline-flex;align-items:center;gap:.5rem;background:#0d1b2a;color:#ffcf3f;
+			font-weight:700;border-radius:999px;padding:.5rem 1rem;font-size:1.05rem}
+		.token-chip .dot{width:16px;height:16px;border-radius:50%;
+			background:radial-gradient(circle at 34% 30%,#ffe487,#e6a70f 70%);box-shadow:inset 0 0 0 1px #8a6207}
+
+		/* prize showcase */
+		.prize-card{border:1px solid var(--bs-border-color);border-radius:1rem;padding:1rem;text-align:center;height:100%;
+			background:var(--bs-body-bg);transition:.15s}
+		.prize-card .pc-emoji{font-size:2.4rem;line-height:1}
+		.prize-card .pc-name{font-weight:700;margin:.4rem 0 .2rem}
+		.prize-card .pc-left{font-size:.85rem}
+		.prize-card.out{opacity:.5;filter:grayscale(.5)}
+
+		/* stage / reel */
+		.stage{background:radial-gradient(120% 120% at 50% 0%,#123524,#0d1b2a 65%);border-radius:1.25rem;
+			padding:1.25rem;box-shadow:inset 0 0 60px rgba(0,0,0,.4)}
+		.roller{position:relative;overflow:hidden;height:var(--rollh);border-radius:.9rem;
+			background:linear-gradient(180deg,#0a1420,#0e1a12);border:1px solid #24402f}
+		.strip{position:absolute;top:50%;left:0;display:flex;gap:10px;transform:translate(0,-50%);will-change:transform}
+		.tile{position:relative;flex:0 0 auto;width:var(--tile);height:var(--tile);border-radius:.7rem;overflow:hidden;
+			border:1px solid #2a4636;background:linear-gradient(180deg,#12241a,#0a1410);display:flex;flex-direction:column;
+			align-items:center;justify-content:center;gap:.25rem;color:#eaf6ee}
+		.tile .t-emoji{font-size:2rem;line-height:1}
+		.tile .t-lab{font-size:.72rem;font-weight:700;text-align:center;padding:0 .3rem;color:#cfe8d9}
+		.tile::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--tc,#22c55e);box-shadow:0 0 12px var(--tc,#22c55e)}
+		.roller.done .tile:not(.win){filter:brightness(.45) saturate(.7);transition:filter .35s}
+		.tile.win{transform:scale(1.06);border-color:var(--tc,#ffcf3f);box-shadow:0 0 0 2px var(--tc,#ffcf3f),0 0 30px var(--tc,#ffcf3f);z-index:3;transition:.35s}
+		.marker{position:absolute;top:0;bottom:0;left:50%;width:2px;z-index:6;transform:translateX(-50%);
+			background:linear-gradient(180deg,#ffcf3f,#f3a712);box-shadow:0 0 12px #ffcf3f}
+		.marker::before,.marker::after{content:"";position:absolute;left:50%;transform:translateX(-50%);border:9px solid transparent}
+		.marker::before{top:-2px;border-top-color:#ffcf3f}
+		.marker::after{bottom:-2px;border-bottom-color:#ffcf3f}
+		.fade{position:absolute;top:0;bottom:0;width:56px;z-index:5;pointer-events:none}
+		.fade.l{left:0;background:linear-gradient(90deg,#0a1420,transparent)}
+		.fade.r{right:0;background:linear-gradient(270deg,#0a1420,transparent)}
+
+		.spin-btn{border:0;border-radius:.8rem;padding:.9rem 3rem;font-weight:700;font-size:1.15rem;letter-spacing:.05em;
+			color:#20180a;background:linear-gradient(180deg,#ffe07a,#ffcf3f 46%,#f3a712);
+			box-shadow:0 12px 26px -10px rgba(243,167,18,.6)}
+		.spin-btn:disabled{filter:grayscale(.5) brightness(.8);cursor:not-allowed}
+		@media (prefers-reduced-motion:reduce){.tile.win,.roller.done .tile:not(.win){transition:none}}
+	</style>
+</head>
+<body>
+	<!-- NAVBAR -->
+	<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom sticky-top">
+		<div class="container">
+			<a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="index.html">
+				<span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-dark text-warning" style="width:40px;height:40px;font-size:.72rem;font-weight:700;">10.4</span> classroom
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Mở menu">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="mainNav">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item"><a class="nav-link" href="index.html">Introduction</a></li>
+					<li class="nav-item"><a class="nav-link" href="library.html">Library</a></li>
+					<li class="nav-item"><a class="nav-link" href="quest.html">Quest</a></li>
+					<li class="nav-item"><a class="nav-link active" aria-current="page" href="prize.html">Prize 🎁</a></li>
+				</ul>
+				<div class="d-flex gap-2 align-items-center">
+					<span id="tokenChip" class="token-chip d-none"><span class="dot"></span><b id="tokenVal">0</b> token</span>
+					<div class="d-flex gap-2" id="auth-actions">
+						<a class="btn btn-outline-secondary" href="signin.html">Sign in</a>
+						<a class="btn btn-primary" href="signup.html">Sign up</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<!-- signed-out gate -->
+	<div id="gate" class="container py-5 d-none">
+		<div class="alert alert-warning">
+			Bạn cần <a href="signin.html?next=minigame.html" class="alert-link">đăng nhập</a> để chơi. Chưa có token? Làm <a href="quest.html" class="alert-link">Quest</a> để nhận.
+		</div>
+	</div>
+
+	<main id="content" class="container py-4 d-none" style="max-width:960px">
+		<div class="text-center mb-4">
+			<p class="text-primary text-uppercase fw-bold mb-1" style="letter-spacing:.16em;font-size:.8rem;">Minigame</p>
+			<h1 class="display-6 fw-bold mb-2">🎁 Vòng quay quà 10.4</h1>
+			<p class="text-secondary mb-0">Mỗi lượt quay tốn <strong>1 token</strong>. Trúng quà thật — số lượng có hạn!</p>
+		</div>
+
+		<!-- prize showcase -->
+		<div class="row row-cols-2 row-cols-md-4 g-3 mb-4" id="prizeCards"></div>
+
+		<!-- stage -->
+		<div class="stage">
+			<div class="roller" id="roller">
+				<div class="strip" id="strip"></div>
+				<div class="fade l"></div><div class="fade r"></div>
+				<div class="marker"></div>
+			</div>
+			<div class="text-center mt-4">
+				<button class="spin-btn" id="spinBtn">Quay (1 token)</button>
+				<div class="text-white-50 small mt-2" id="hint">Bạn có <b id="hintTok">0</b> token</div>
+			</div>
+		</div>
+
+		<!-- no-token note -->
+		<div id="noToken" class="alert alert-info mt-4 d-none">
+			Bạn chưa có token. Hãy làm <a href="quest.html" class="alert-link">Quest</a> để nhận token rồi quay nhé!
+		</div>
+	</main>
+
+	<!-- Congrats modal -->
+	<div class="modal fade" id="winModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content border-0 shadow-lg text-center">
+				<div class="modal-body p-4 p-md-5">
+					<div style="font-size:3.4rem;line-height:1" id="winEmoji">🎉</div>
+					<h3 class="fw-bold mt-2 mb-1">Chúc mừng!</h3>
+					<p class="mb-3">Bạn đã trúng <strong id="winName" class="text-success"></strong></p>
+
+					<!-- STEP 1: who is claiming -->
+					<div id="claimStep">
+						<p class="text-secondary small mb-2">Điền thông tin để nhận quà:</p>
+						<div class="btn-group w-100 mb-3" role="group" aria-label="Loại người nhận">
+							<input type="radio" class="btn-check" name="claimType" id="typeStudent" value="student" checked>
+							<label class="btn btn-outline-primary" for="typeStudent">🎓 Học sinh</label>
+							<input type="radio" class="btn-check" name="claimType" id="typeParent" value="parent">
+							<label class="btn btn-outline-primary" for="typeParent">👪 Phụ huynh</label>
+						</div>
+
+						<!-- student fields -->
+						<div id="studentFields" class="text-start">
+							<div class="mb-2">
+								<label class="form-label small mb-1">Mã số học sinh (Student ID)</label>
+								<input type="text" class="form-control" id="fStudentId" placeholder="VD: 10420">
+							</div>
+							<div class="mb-2">
+								<label class="form-label small mb-1">Tên học sinh</label>
+								<input type="text" class="form-control" id="fStudentName" placeholder="Họ và tên">
+							</div>
+							<div class="mb-2">
+								<label class="form-label small mb-1">Lớp</label>
+								<input type="text" class="form-control" id="fStudentClass" placeholder="VD: 10.4">
+							</div>
+						</div>
+
+						<!-- parent fields -->
+						<div id="parentFields" class="text-start d-none">
+							<div class="mb-2">
+								<label class="form-label small mb-1">Tên của con (học sinh)</label>
+								<input type="text" class="form-control" id="fKidName" placeholder="Họ và tên của con">
+							</div>
+							<div class="mb-2">
+								<label class="form-label small mb-1">Lớp của con</label>
+								<input type="text" class="form-control" id="fKidClass" placeholder="VD: 10.4">
+							</div>
+						</div>
+
+						<div id="claimErr" class="text-danger small mt-1 mb-2"></div>
+						<button class="btn btn-success w-100 fw-bold" id="claimConfirm">Xác nhận nhận quà</button>
+					</div>
+
+					<!-- STEP 2: proof id -->
+					<div id="proofStep" class="d-none">
+						<div class="bg-body-tertiary border rounded-3 p-3 mb-3">
+							<div class="text-secondary small text-uppercase" style="letter-spacing:.1em">Mã nhận quà · proof id</div>
+							<div class="fs-4 fw-bold" style="letter-spacing:.06em" id="winId">—</div>
+							<div class="text-secondary small mt-1" id="winUser"></div>
+						</div>
+						<div class="alert alert-warning small mb-3">📸 Hãy <strong>chụp màn hình</strong> mã này làm bằng chứng để nhận quà từ lớp.</div>
+						<button class="btn btn-primary px-4" data-bs-dismiss="modal">Đã chụp xong</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer class="bg-dark text-white-50 py-4 border-top border-secondary mt-5">
+		<div class="container d-flex flex-wrap justify-content-between small">
+			<span>© 2026 Lớp 10.4 · Trường Sao Việt</span>
+			<span>Phòng A716</span>
+		</div>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module" src="assets/js/navbar-auth.js"></script>
+	<script type="module" src="assets/js/minigame.js"></script>
+</body>
+</html>
